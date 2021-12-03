@@ -1,0 +1,21 @@
+package Dominio;
+
+public class Opcional extends Asignatura{
+	private int credito_necesario;
+
+	public Opcional(String codigo, String nombre, int credito, String tipo_asig, int credito_necesario) {
+		super(codigo, nombre, credito, tipo_asig);
+		this.credito_necesario = credito_necesario;
+	}
+
+	public int getCredito_necesario() {
+		return credito_necesario;
+	}
+
+	public void setCredito_necesario(int credito_necesario) {
+		this.credito_necesario = credito_necesario;
+	}
+	
+	
+
+}
