@@ -1,0 +1,49 @@
+package Dominio;
+
+public class Paralelo {
+	private String numero_par;
+	private String codigo_a;
+	private String rut_p;
+	private String[] listaEstudiantes;
+	private int cant_estudiantes;
+	public Paralelo(String numero_par, String codigo_a, String rut_p,String[] listaEstudiantes,int cant_estudiantes) {
+		super();
+		this.numero_par = numero_par;
+		this.codigo_a = codigo_a;
+		this.rut_p = rut_p;
+		this.listaEstudiantes = listaEstudiantes;
+		this.cant_estudiantes = cant_estudiantes;
+	}
+	public String getNumero_par() {
+		return numero_par;
+	}
+	public void setNumero_par(String numero_par) {
+		this.numero_par = numero_par;
+	}
+	public String getCodigo_a() {
+		return codigo_a;
+	}
+	public void setCodigo_a(String codigo_a) {
+		this.codigo_a = codigo_a;
+	}
+	public String getRut_p() {
+		return rut_p;
+	}
+	public void setRut_p(String rut_p) {
+		this.rut_p = rut_p;
+	}
+	public String[] getListaEstudiantes() {
+		return listaEstudiantes;
+	}
+	public void setListaEstudiantes(String[] listaEstudiantes) {
+		this.listaEstudiantes = listaEstudiantes;
+	}
+	public int getCant_estudiantes() {
+		return cant_estudiantes;
+	}
+	public void setCant_estudiantes(int cant_estudiantes) {
+		this.cant_estudiantes = cant_estudiantes;
+	}
+	
+
+}
