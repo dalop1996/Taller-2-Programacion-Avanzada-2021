@@ -1,0 +1,89 @@
+package Dominio;
+
+public class Estudiante extends Usuarios {
+	private int nivel;
+	private int cant_ramos;
+	private String [] listaRamos;
+	private double[] listaNotas;
+	private String [] listaRamosCursados;
+	private double[] listaNotasCursadas;
+	private int creditos;
+	
+	public Estudiante(String rut, String correo, String pass, int nivel, int cant_ramos, String[] listaRamos,
+			double[] listaNotas,String [] listaRamosCursados,double[] listaNotasCursadas, int creditos) {
+		super(rut, correo, pass);
+		this.nivel = nivel;
+		this.cant_ramos = cant_ramos;
+		this.listaRamos = listaRamos;
+		this.listaNotas = listaNotas;
+		this.listaRamosCursados = listaRamosCursados;
+		this.listaNotasCursadas = listaNotasCursadas;
+	}
+	
+	public double[] getListaNotasCursadas() {
+		return listaNotasCursadas;
+	}
+
+	public void setListaNotasCursadas(double[] listaNotasCursadas) {
+		this.listaNotasCursadas = listaNotasCursadas;
+	}
+
+	public String[] getListaRamosCursados() {
+		return listaRamosCursados;
+	}
+
+	public void setListaRamosCursados(String[] listaRamosCursados) {
+		this.listaRamosCursados = listaRamosCursados;
+	}
+
+	public int getNivel() {
+		return nivel;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+
+	public int getCant_ramos() {
+		return cant_ramos;
+	}
+
+	public void setCant_ramos(int cant_ramos) {
+		this.cant_ramos = cant_ramos;
+	}
+
+	public String[] getListaRamos() {
+		return listaRamos;
+	}
+
+	public void setListaRamos(String[] listaRamos) {
+		this.listaRamos = listaRamos;
+	}
+
+	public double[] getListaNotas() {
+		return listaNotas;
+	}
+
+	public void setListaNotas(double[] listaNotas) {
+		this.listaNotas = listaNotas;
+	}
+
+	public int getCreditos() {
+		return creditos;
+	}
+
+	public void setCreditos(int creditos) {
+		this.creditos = creditos;
+	}
+	
+	public int getCantInscritos() {
+		int cant = 0;
+		for (int i =0;i<=listaRamos.length;i++) {
+			cant++;
+		}
+		
+		return cant;
+	}
+			
+
+}
