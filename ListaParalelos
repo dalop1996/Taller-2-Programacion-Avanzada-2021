@@ -1,0 +1,56 @@
+package Logica;
+import Dominio.*;
+public class ListaParalelos {
+	private Paralelo[] l_p;
+	private int max;
+	private int cant;
+	public ListaParalelos(int max) {
+		super();
+		l_p = new Paralelo[max];
+		cant = 0;
+		this.max = max;
+	}
+	public int getCant() {
+		return cant;
+	}
+	public void setCant(int cant) {
+		this.cant = cant;
+	}
+	public boolean InsertarParalelo(Paralelo paralelo) {
+        if(cant<max) {
+            l_p[cant] = paralelo;
+            cant++;
+            return true;
+        }else {
+            return false;
+        }
+
+	}
+	public Paralelo buscar(String codigo) {
+		int i=0;
+		while(i<cant && !l_p[i].getCodigo_a().equals(codigo)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return l_p[i];
+		}
+	}
+	public Paralelo buscarPos(int i) {
+    	if(i<=cant) {
+    		return l_p[i];
+    	}else {
+    		return null;
+    	}
+    }
+	public Paralelo buscarXParalelo(String paralelo) {
+		int i=0;
+		while(i<cant && !l_p[i].getNumero_par().equals(paralelo)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return l_p[i];
+		}
+	}
+}
