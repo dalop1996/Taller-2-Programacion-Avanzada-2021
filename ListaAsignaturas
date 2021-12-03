@@ -1,0 +1,66 @@
+package Logica;
+import Dominio.Asignatura;
+import Dominio.Obligatoria;
+import Dominio.Opcional;
+import Dominio.Usuarios;
+
+public class ListaAsignaturas {
+	private Asignatura[] l_a;
+	private int cant;
+	private int max;
+	public ListaAsignaturas(int max) {
+		l_a = new Asignatura[max];
+		cant = 0;
+		this.max = max;
+	}
+	public int getCant() {
+		return cant;
+	}
+	public void setCant(int cant) {
+		this.cant = cant;
+	}
+	public boolean InsertarAObligatoria(Obligatoria obligatoria) {
+        if(cant<max) {
+            l_a[cant] = obligatoria;
+            cant++;
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+    public boolean InsertarAOpcional(Opcional opcional) {
+
+        if(cant<max) {
+            l_a[cant] = opcional;
+            cant++;
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public Asignatura buscarPosicion(int i) {
+    	if(i<=cant) {
+    		return l_a[i];
+    	}else {
+    		return null;
+    	}
+    }
+    public Obligatoria buscarObligatoria(int i) {
+    	if(i<=cant) {
+    		return (Obligatoria) l_a[i];
+    	}else {
+    		return null;
+    	}
+    }
+    public Asignatura buscar(String asignatura) {
+		int i=0;
+		while(i<cant && !l_a[i].getNombre().equals(asignatura)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return l_a[i];
+		}
+	}
+}
