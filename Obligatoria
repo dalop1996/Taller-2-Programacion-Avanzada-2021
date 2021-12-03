@@ -1,0 +1,35 @@
+package Dominio;
+
+public class Obligatoria extends Asignatura {
+	private int nivel;
+	private int cant_asig;
+	private String[] lista_codigo;
+	public Obligatoria(String codigo, String nombre, int credito, String tipo_asig, int nivel, int cant_asig,
+			String[] lista_codigo) {
+		super(codigo, nombre, credito, tipo_asig);
+		this.nivel = nivel;
+		this.cant_asig = cant_asig;
+		this.lista_codigo = lista_codigo;
+	}
+	public int getNivel() {
+		return nivel;
+	}
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+	public int getCant_asig() {
+		return cant_asig;
+	}
+	public void setCant_asig(int cant_asig) {
+		this.cant_asig = cant_asig;
+	}
+	public String[] getLista_codigo() {
+		return lista_codigo;
+	}
+	public void setLista_codigo(String[] lista_codigo) {
+		this.lista_codigo = lista_codigo;
+	}
+	
+	
+
+}
