@@ -1,0 +1,345 @@
+package Logica;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import Dominio.*;
+
+public class SistemaImpl implements Sistema{
+    private ListaAsignaturas l_a;
+    private ListaUsuarios l_u;
+    private ListaParalelos l_p;
+    static DateTimeFormatter formatoDeEntrada = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    
+    public SistemaImpl () {
+        l_a= new ListaAsignaturas(1000);
+        l_u = new ListaUsuarios(1000);
+        l_p = new ListaParalelos(1000);
+        
+    }
+    public boolean agregarEstudiante(String rut, String correo,String contraseña,int nivel,int cant_ramos, String[] listaRamos ,double[] listaNotas,String[] listaRamosCursados,double[] listaNotasCursadas,int creditos) {
+            
+            Estudiante estudiante  = new Estudiante(rut,correo,contraseña,nivel,cant_ramos,listaRamos,listaNotas, listaRamosCursados,listaNotasCursadas, creditos);
+            boolean ingreso = l_u.InsertarEstudiante(estudiante);
+        
+        return ingreso;
+    }
+
+    
+    public boolean agregarProfesor(String rut_p, String correo, String contraseña, int salario,String[] listaRamos_P) {
+        
+            Profesor profesor = new Profesor(rut_p,correo,contraseña,salario,listaRamos_P);
+            boolean ingreso = l_u.InsertarProfesor(profesor);
+        return ingreso;
+    }
+
+    
+    public boolean agregarAsignaturaObligatoria(String codigo, String nombre, int credito, String tipo_asig, int nivel, int cant_asig,
+            String[] lista_codigo) {
+        
+            Obligatoria obligatoria = new Obligatoria(codigo,nombre,credito, tipo_asig,nivel,cant_asig,lista_codigo);
+            boolean ingreso = l_a.InsertarAObligatoria(obligatoria);
+        
+        return ingreso;
+    }
+    
+    public boolean agregarAsignaturaOpcional(String codigo, String nombre, int credito_necesario, String tipo_asig,
+            int credito_necesario2) {
+        
+            Opcional opcional = new Opcional(codigo,nombre,credito_necesario,tipo_asig,credito_necesario2);
+            boolean ingreso = l_a.InsertarAOpcional(opcional);
+        
+        return ingreso;
+    }
+
+    
+    public boolean agregarParalelo(String n_paralelo, String codigo, String rut_p,String[] listaEstudiantes,int cant_estudiantes) {
+        
+        Paralelo paralelo = new Paralelo(n_paralelo,codigo,rut_p, listaEstudiantes,cant_estudiantes);
+        boolean ingreso = l_p.InsertarParalelo(paralelo);
+        
+        return ingreso;
+    }
+
+    
+    public boolean verificarFechaS(String dia, String mes, String año) {
+        
+        return false;
+    }
+
+    
+    public String cursarAsignatura(String codigo) {
+        
+        return null;
+    }
+
+    
+    
+    @Override
+    public String desplegarAsignaturas(String correo) {
+        String txt="";
+        for(int i=0;i<l_a.getCant();i++) {
+        	if(l_a.buscarPosicion(i).getTipo_asig().equals("obligatoria") && (l_a.buscarObligatoria(i).getNivel() == l_u.buscarEstudiante(correo).getNivel()) ) {
+        		txt+="Asignatura: "+l_a.buscarPosicion(i).getNombre()+"\n";
+        	}else if(l_a.buscarPosicion(i).getTipo_asig().equals("opcional")){
+        		txt+="Asignatura: "+l_a.buscarPosicion(i).getNombre()+"\n";
+        	}
+        }
+        if(txt.equals("")) {
+        	return "No se encontraron asignaturas";
+        }
+        return txt;
+    }
+
+    @Override
+    public String desplegarParalelos(String asignatura, String correo) {
+        String txt="";
+        String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
+        int k=0;
+        int c=0;
+        while(listaA[k] != null) {
+        	k++;
+        }if(k<listaA.length) {
+        	for(int p=0; p<l_a.getCant();p++) {
+        		if(l_a.buscarPosicion(p).getNombre().equals(asignatura)) {
+        			for(int i=0;i<l_p.getCant();i++) {
+                    	if(l_p.buscarPos(i).getCodigo_a().equals((l_a.buscar(asignatura).getCodigo()))) {
+                    		txt+="Paralelo para "+asignatura+": "+l_p.buscarPos(i).getNumero_par()+"\n";
+                    	}
+                    
+                    
+        		}
+        	}
+        }/*}else {
+        		while(c<k && !listaA[c].equals(asignatura)) {
+                	c++;
+                }if(c==listaA.length) {
+                	for(int i=0;i<l_a.getCant();i++) {
+                    	if(l_a.buscarPosicion(i).getNombre().equals(asignatura)) {
+                    		txt+="Paralelo para "+asignatura+": "+l_p.buscar(l_a.buscarPosicion(i).getCodigo()).getNumero_par()+"\n";
+                    	}
+                    }if(txt.equals("")) {
+                    	return "No se encontraron paralelos para dicha asignatura";
+                    }
+                }else {
+                	txt="La asignatura ya esta inscrita";
+                }
+        }*/
+        }if(txt.equals("")) {
+        	txt= "No se encontraron paralelos para dicha asignatura";
+        }
+        return txt;
+    }
+    public String inscribirAsignatura(String correo, String asignatura, String paralelo) {
+		String txt="";
+		String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
+		double[] listaN = l_u.buscarEstudiante(correo).getListaNotas();
+		String[] listaR = l_u.buscarEstudiante(correo).getListaRamosCursados();
+		double[] listaNR = l_u.buscarEstudiante(correo).getListaNotasCursadas();
+		int i=0;
+		while(i<l_p.getCant() && !l_p.buscarPos(i).getNumero_par().equals(paralelo) && !l_p.buscarPos(i).getCodigo_a().equals(l_a.buscar(asignatura).getCodigo()) && (l_u.buscarEstudiante(correo).getCreditos() < 40)) {
+			i++;
+		}if(i==l_p.getCant()) {
+			txt="No se encontro el paralelo";
+		}else {
+			int contador=0;
+			if(l_a.buscarPosicion(i).getTipo_asig().equals("obligatoria")) {
+				String[] obligatoria = l_a.buscarObligatoria(i).getLista_codigo();
+				for(int c=0;c<l_a.buscarObligatoria(i).getCant_asig();c++) {
+					for(int p=0; p<l_u.buscarEstudiante(correo).getCant_ramos();p++) {
+						if(obligatoria[c].equals(listaR[p])) {
+							if(listaNR[p]>=(3.95)) {
+								contador++;
+							}
+						}
+					}
+				}
+				if(contador==l_a.buscarObligatoria(i).getCant_asig()) {
+					for(int k=0; k<10;k++) {
+						if(listaA[k] == null) {
+							listaA[k] = asignatura;
+							listaN[k] = 0.0;
+							break;
+						}
+					}
+					txt="Asignatura ingresada con exito";
+				}else {
+					txt="No cumple con los requisitos";
+				}
+			}else {
+				for(int k=0; k<10;k++) {
+					if(listaA[k] == null) {
+						listaA[k] = asignatura;
+						
+						listaN[k] = 0.0;
+						
+						break;
+					}
+				}
+				txt="Asignatura ingresada con exito";
+			}
+			l_u.buscarEstudiante(correo).setListaRamos(listaA);
+			l_u.buscarEstudiante(correo).setListaNotas(listaN);
+			l_u.buscarEstudiante(correo).setCreditos(l_a.buscar(asignatura).getCredito());
+			String[] listaP = l_p.buscar(l_a.buscar(asignatura).getCodigo()).getListaEstudiantes();
+			listaP[l_p.buscar(l_a.buscar(asignatura).getCodigo()).getCant_estudiantes()] = correo;
+			l_p.buscar(l_a.buscar(asignatura).getCodigo()).setCant_estudiantes(l_p.buscar(l_a.buscar(asignatura).getCodigo()).getCant_estudiantes() + 1);
+			l_p.buscar(l_a.buscar(asignatura).getCodigo()).setListaEstudiantes(listaP);
+			
+		}
+		return txt;
+	}
+
+    
+    public String eliminarASignatura(String nombreA,String correo) {
+    	String txt="";
+		String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
+		double[] listaN = l_u.buscarEstudiante(correo).getListaNotas();
+		int i = 0;
+		while(i<10 && listaA[i]==null ) {
+			i++;
+		}
+		if(i==10) {
+			txt="La asignatura no coincide con ninguna de las ya inscritas";
+		}
+		else if(listaA[i].equals(nombreA)) {
+			listaA[i]=listaA[i+1];
+			listaN[i]=listaN[i+1];
+			l_u.buscarEstudiante(correo).setCant_ramos(l_u.buscarEstudiante(correo).getCant_ramos()-1);
+			l_u.buscarEstudiante(correo).setListaRamos(listaA);
+			l_u.buscarEstudiante(correo).setListaNotas(listaN);
+			txt="Asignatura eliminada correctamente";
+		}else {
+			txt="nose que decirte vieja";
+		}
+		
+        return txt;
+    }
+
+    @Override
+    public String paralaleosInscritos(String rut_p) {
+    	String txt = "";
+    	for (int i = 0; i<l_p.getCant();i++) {
+    		
+    		if(l_p.buscarPos(i).getRut_p().equals(rut_p)) {
+    			txt+="-Codigo Asignatura: "+l_p.buscarPos(i).getCodigo_a() +" - Paralelo: " + l_p.buscarPos(i).getNumero_par()+"\n";
+    		}
+    	}
+    	
+    	
+        return txt;
+    }
+
+    @Override
+    public String alumnosParalelos(String para) {
+        String txt = "";
+        String[] listaP = l_p.buscarXParalelo(para).getListaEstudiantes();
+        for (int i = 0; i<listaP.length;i++) {
+        	if(listaP[i]==null) {
+        		i++;
+        	}else {
+        		txt += "Correo Estudiante: "+ listaP[i] + "\n";
+        	}
+        	
+        }
+    	
+        return txt;
+    }
+
+    @Override
+    public boolean notaFinal(String rut_a) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean EliminarAlumno() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String obtenerAlumnosEgresados() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+	@Override
+	public String verificarUsuario(String correo, String pass) {
+		String tipo = l_u.verificar(correo, pass);
+		System.out.println(l_u.getCant());
+		return tipo;
+	}
+	@Override
+	public String verificarFechaI(String fecha) throws Exception {
+        String txt = "null";
+
+        LocalDate fecha1 = LocalDate.parse(fecha, formatoDeEntrada);
+        LocalDate Iuno = LocalDate.parse("08-03-2021", formatoDeEntrada);
+        LocalDate Funo = LocalDate.parse("02-05-2021", formatoDeEntrada);
+        LocalDate Idos = LocalDate.parse("03-05-2021", formatoDeEntrada);
+        LocalDate Fdos = LocalDate.parse("11-07-2021", formatoDeEntrada);
+        LocalDate Itres = LocalDate.parse("12-07-2021", formatoDeEntrada);
+        LocalDate Ftres = LocalDate.parse("25-07-2021", formatoDeEntrada);
+        LocalDate FF = LocalDate.parse("26-07-2021", formatoDeEntrada);
+
+        if(!(fecha1.isBefore(Iuno) || fecha1.isAfter(Funo))) {
+            txt="Inicio";
+            System.out.println("Primero ciclo");
+
+        }else if(!(fecha1.isBefore(Idos) || fecha1.isAfter(Fdos) )) {
+            txt="Mitad";
+            System.out.println("S ciclo");
+
+
+        }else if(!(fecha1.isBefore(Itres)||fecha1.isAfter(Ftres))) {
+            txt="Final";
+            System.out.println("T ciclo");
+
+        }else if(fecha1.compareTo(FF) ==0) {
+            txt="Cierre";
+            System.out.println("F ciclo");
+
+        }else {
+            System.out.print("Disfrute de sus Vacaciones");
+
+        }
+        return txt;
+
+    }
+	@Override
+	public boolean revisarAsignatura(String asignatura, String correo) {
+		String[] lista = l_u.buscarEstudiante(correo).getListaRamos();
+		int k=0;
+		while(k<lista.length && lista[k] != null) {
+			if(lista[k].equals(asignatura)) {
+				return false;
+				
+			}
+			k++;
+		}
+		return true;
+	}
+	@Override
+	public String AsignaturasInscritas(String correo) {
+		String txt="";
+		String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
+		
+		int i = 0;
+		
+		while(i<10 && listaA[i]==null) {
+			i++;
+		}if(i==10) {
+			return txt;
+		}else {
+			
+			txt+=listaA[i]+"\n";
+		}
+		
+		return txt;
+	}
+	
+		
+}
