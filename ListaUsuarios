@@ -1,0 +1,88 @@
+package Logica;
+import Dominio.*;
+
+public class ListaUsuarios {
+	private Usuarios[] l_u;
+	private int cant;
+	private int max;
+	
+	public ListaUsuarios( int max) {
+		l_u = new Usuarios[max];
+		cant = 0;
+		this.max = max;
+	}
+	public int getCant() {
+		return cant;
+	}
+	public void setCant(int cant) {
+		this.cant = cant;
+	}
+	public boolean InsertarEstudiante(Estudiante estudiante) {
+        if(cant<max) {
+            l_u[cant] = estudiante;
+            cant++;
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+    public boolean InsertarProfesor(Profesor profesor) {
+
+        if(cant<max) {
+            l_u[cant] = profesor;
+            cant++;
+            return true;
+        }else {
+            return false;
+        }
+    }
+	public String verificar(String correo, String pass) {
+		String txt="null";
+		int i=0;
+		while(i<cant && !l_u[i].getCorreo().equals(correo) && !l_u[i].getPass().equals(pass)) {
+			i++;
+		}if(i==cant) {
+			return txt;
+		}else {
+			if(l_u[i].getPass().equals(pass)) {
+				
+				String linea = l_u[i].getCorreo();
+				String[] parte = linea.split("@");
+				txt = parte[1];
+				
+			}
+			return txt;
+		}
+	}
+	public Usuarios buscar(String correo) {
+		int i=0;
+		while(i<cant && !l_u[i].getCorreo().equals(correo)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return l_u[i];
+		}
+	}
+	public Profesor buscarProfe(String correo) {
+		int i=0;
+		while(i<cant && !l_u[i].getCorreo().equals(correo)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return (Profesor) l_u[i];
+		}
+	}
+	public Estudiante buscarEstudiante(String correo) {
+		int i=0;
+		while(i<cant && !l_u[i].getCorreo().equals(correo)) {
+			i++;
+		}if(i==cant) {
+			return null;
+		}else{
+			return (Estudiante) l_u[i];
+		}
+	}
+}
