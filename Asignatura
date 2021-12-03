@@ -1,0 +1,41 @@
+package Dominio;
+
+public abstract class Asignatura {
+	private String codigo;
+	private String nombre;
+	private int credito;
+	private String tipo_asig;
+	public Asignatura(String codigo, String nombre, int credito, String tipo_asig) {
+		super();
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.credito = credito;
+		this.tipo_asig = tipo_asig;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public int getCredito() {
+		return credito;
+	}
+	public void setCredito(int credito) {
+		this.credito = credito;
+	}
+	public String getTipo_asig() {
+		return tipo_asig;
+	}
+	public void setTipo_asig(String tipo_asig) {
+		this.tipo_asig = tipo_asig;
+	}
+	
+	
+}
