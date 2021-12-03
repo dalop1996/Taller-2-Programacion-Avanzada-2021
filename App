@@ -1,0 +1,309 @@
+package Logica;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Scanner;
+
+public class App {
+
+	public static void main(String[] args) throws Exception {
+		Scanner scaner = new Scanner(System.in);
+		Sistema sis = new SistemaImpl();
+		int cantAsignaturas = leerAsignatura(sis);
+		int cantEstudiantes = leerEstudiantes(sis);
+		int cantProfesores = leerProfesores(sis);
+		int cantParalelo = leerParalelo(sis);
+		
+		
+		//separar el correo en el arriba y retornar si es profe o no
+		String respuesta="";
+		while(!respuesta.equals("1")){
+            System.out.println("Ingrese su correo: ");
+            String correo = scaner.next();
+            System.out.println("Ingrese su contraseña: ");
+            String pass = scaner.next();
+            if(correo.equals("Admin") && pass.equals("GHI_789")) {
+                //modo admin
+                System.out.println("Ingrese la fecha actual (DD/MM/YYYY):");
+                String fecha = scaner.next();
+                String periodo = sis.verificarFechaI(fecha);
+                
+                System.out.println(periodo);
+                if(periodo.equals("Cierre")) {
+                    System.out.println("Menu cierre de semestre");
+                }else {
+                    System.out.println("No hay acciones disponibles");
+                }
+            }else {
+                String res = sis.verificarUsuario(correo,pass);
+                System.out.println(res);
+                if(res.equals("null")) {
+                    System.out.println("No coinciden los datos\nDesea volver a intentarlo [1] o Cerrar [2]");
+                    String res1 = scaner.next();
+                    while(!res1.equals("1") && !res1.equals("2")) {
+                        System.out.println("No coinciden los datos\n Desea volver a intentarlo [1] o Cerrar [2]");
+                        res1 = scaner.next();
+                    }
+                    if(res1.equals("2")) {
+                        //cerrar
+                        respuesta="2";
+                        break;
+                    }
+                }else {
+                    System.out.println("Ingrese la fecha actual (DD-MM-YYYY):");
+                    String fecha = scaner.next();
+                    String periodo = sis.verificarFechaI(fecha);
+                    boolean condicion = true;
+                    while(condicion) {
+                    	if(periodo.equals("Inicio")) {
+                            System.out.println("Menu inicio semestre");
+                            if(res.equals("alumnos.ucn.cl")) {
+                                System.out.println("1)Inscripcion de asignaturas\n2)Eliminacion de asignaturas");
+                                String opc = scaner.next();
+                                if(opc.equals("1")) {
+                                	//se debe verificar que la asignatura de prerequisito las tengas cumplidas el alumno
+                                	System.out.println(sis.desplegarAsignaturas(correo));
+                                	if(!sis.desplegarAsignaturas(correo).equals("No se encontraron asignaturas")) {
+                                		System.out.println("Escriba el nombre de la asignatura a inscribir: ");
+                                		
+                                		String asignatura = scaner.next();
+                                		if(sis.revisarAsignatura(asignatura,correo) == true) {
+                                			System.out.println(sis.desplegarParalelos(asignatura, correo));
+                                    		if(!sis.desplegarParalelos(asignatura, correo).equals("No se encontraron paralelos para dicha asignatura") && !sis.desplegarParalelos(asignatura, correo).equals("La asignatura ya esta inscrita") ) {
+                                    			System.out.println("Escriba el nombre del paralelo a inscribir: ");
+                                        		String paralelo = scaner.next();
+                                        		System.out.println(sis.inscribirAsignatura(correo,asignatura,paralelo));
+                                        		condicion = bucle();
+                                    		}else {
+                                    			condicion=bucle();
+                                    		}
+                                		}else {
+                                			System.out.println("Ya esta inscrita la asignatura");
+                                			condicion = bucle();
+                                		}
+                                		
+                                	}
+                                }else if(opc.equals("2")) {
+                                	sis.desplegarAsignaturas(correo);
+                                	System.out.println("Eliga la asignatura a eliminar: ");
+                                	System.out.println(sis.AsignaturasInscritas(correo));
+                                	String delete = scaner.nextLine();
+                                	if(delete.equals("")) {
+                                		System.out.println("No tienes asignaturas inscritas");
+                                		condicion = bucle();
+                                	}else {
+                                		System.out.println(sis.eliminarASignatura(delete, correo));
+                                		condicion = bucle();
+                                	}
+                                	
+                                	
+                                }else {
+                                	System.out.println("No se elgio una opcion valida");
+                                }
+                            }
+                            else if(res.equals("ucn.cl")){
+                            	System.out.println("1) Chequeo Alumnos");
+                            	String chequeo = scaner.next();
+                            	if(chequeo.equals("1")) {
+                            		System.out.println("Ingrese su rut");
+                            		String rut_p = scaner.next();
+                            		//verificar rut :D
+                            		System.out.println("Eliga alguno de sus paralelos a chequear");
+                            		System.out.println(sis.paralaleosInscritos(rut_p));
+                            		String paraCheq = scaner.next();
+                            		System.out.println(sis.alumnosParalelos(paraCheq));
+                            		condicion =  bucle();
+                            	}else {
+                            		System.out.println("No se elgio una opcion valida");
+                            	}
+                                
+                            }else {
+                                System.out.println("No hay acciones disponibles");
+                            }
+                        
+                        }else if(periodo.equals("Mitad")) {
+                            System.out.println("Menu mitad de semestre");
+                            
+                            if(res.equals("alumnos.ucn.cl")){
+                            	 System.out.println("1) Eliminacion de asignaturas");
+                            	 String opc =  scaner.next();
+                            	 if(opc.equals("1")) {
+                                 	sis.desplegarAsignaturas(correo);
+                                 	System.out.println("Eliga la asignatura a eliminar: ");
+                                 	System.out.println(sis.AsignaturasInscritas(correo));
+                                 	String delete = scaner.nextLine();
+                                 	if(delete.equals("")) {
+                                 		System.out.println("No tienes asignaturas inscritas");
+                                 		condicion = bucle();
+                                 	}else {
+                                 		System.out.println(sis.eliminarASignatura(delete, correo));
+                                 		condicion = bucle();
+                                 	}
+                            	 }
+                            	 else {
+                            		 System.out.println("No se elgio una opcion valida");
+                            	 }
+                                
+                            }else if(res.equals("ucn.cl")) {
+                                System.out.println("No hay acciones disponibles");
+                                
+                                
+                            }else {
+                                System.out.println("No hay acciones disponibles");
+                            }
+                            
+                        }else if(periodo.equals("Final")) {
+                        	
+                        	System.out.println("Menu Final de semestre");
+                        	
+                            if(res.equals("alumnos.ucn.cl")){
+                                System.out.println("No hay acciones disponibles");
+                                
+                            }else if(res.equals("ucn.cl")){
+                                
+                            }else {
+                                System.out.println("No hay acciones disponibles");
+                            }
+                            
+                        }//else if(periodo.equals("Cierre")) {}
+                            
+                        else {
+                            String res1 ="";
+                            while(!res1.equals("1") && !res1.equals("2")) {
+                                System.out.println("No coinciden los datos\nDesea volver a intentarlo [1] o Cerrar [2]");
+                                res1 = scaner.next();
+                            }if(res1.equals("2")) {
+                                //cerrar
+                                respuesta="2";
+                                break;
+                            }
+                        }
+                    }
+                    
+                    
+                }
+            }
+            
+            
+        }
+	}
+
+	private static int leerProfesores(Sistema sis) throws IOException {
+		BufferedReader arch = new BufferedReader(new FileReader("profesores.txt"));
+		String linea;
+		int cant=0;
+		while((linea=arch.readLine()) != null) {
+			String [] listaRamos_P = new String[10];
+			String[] parte = linea.split(",");
+			String rut = parte[0];
+			String correo = parte[1];
+			String pass = parte[2];
+			int sueldo = Integer.parseInt(parte[3]);
+			sis.agregarProfesor(rut, correo, pass, sueldo, listaRamos_P);
+			cant++;
+			System.out.println(rut);
+		}
+		return cant;
+	}
+
+	private static int leerAsignatura(Sistema sis) throws IOException {
+		BufferedReader arch = new BufferedReader(new FileReader("asignaturas.txt"));
+		String linea;
+		int cant=0;
+		while((linea=arch.readLine()) != null) {
+			String[] lista_codigo = new String[100];
+			String[] parte = linea.split(",");
+			String codigo = parte[0];
+			String nombre = parte[1];
+			int credito = Integer.parseInt(parte[2]);
+			String tipo_asig = parte[3];
+			if(tipo_asig.equals("opcional")) {
+				int credito_necesario = Integer.parseInt(parte[4]);
+				sis.agregarAsignaturaOpcional(codigo, nombre, credito_necesario, tipo_asig, credito_necesario);
+				cant++;
+					
+				}
+			else {
+				int nivel = Integer.parseInt(parte[4]);
+				int cant_asig = Integer.parseInt(parte[5]);
+				for(int i=0; i<cant_asig;i++) {
+					lista_codigo[i] = parte[6+i];
+				}
+				sis.agregarAsignaturaObligatoria(codigo, nombre, credito, tipo_asig, nivel, cant_asig,lista_codigo);
+				cant++;
+				
+			}
+		}
+
+		return cant;
+	}
+	private static int leerEstudiantes(Sistema sis) throws IOException {
+		BufferedReader arch = new BufferedReader(new FileReader("estudiantes.txt"));
+		String linea;
+		int cant=0;
+		while((linea=arch.readLine()) != null) {
+			int contador=5;
+			String [] listaRamosCursados = new String[10];
+			String[] listaRamos= new String[10];
+			double[] listaNotasCursados = new double[10];
+			double[] listaNotas = new double[10];
+			String[] parte = linea.split(",");
+			String rut = parte[0];
+			String correo = parte[1];
+			String pass = parte[3];
+			int nivel = Integer.parseInt(parte[2]);
+			int cant_ramos = Integer.parseInt(parte[4]);
+			int creditos =0;
+			for(int i= 0; i<cant_ramos;i++) {
+				listaRamosCursados[i] = parte[contador];
+				contador++;
+				listaNotasCursados[i] = Double.parseDouble(parte[contador]);
+				contador++;
+			}
+			sis.agregarEstudiante(rut, correo, pass, nivel, cant_ramos, listaRamos, listaNotas, listaRamosCursados, listaNotasCursados,creditos);
+
+			cant++;
+		}
+		return cant;
+	}
+	private static int leerParalelo(Sistema sis) throws IOException{
+		BufferedReader arch = new BufferedReader(new FileReader("paralelos.txt"));
+        int cant = 0;
+        String line; 
+        String[] listaEstudiantes = new String[100];
+        while((line=arch.readLine())!=null) {
+            String [] parte = line.split(",");
+            String numero_paralelo = parte[0];
+            String codigo = parte[1];
+            String rut_p = parte[2];
+            int cant_estudiantes=0;
+            sis.agregarParalelo(numero_paralelo, codigo, rut_p, listaEstudiantes,cant_estudiantes);
+            cant++;
+        }
+
+        return cant;
+    }
+	private static boolean bucle() {
+		Scanner scaner = new Scanner(System.in);
+		String res="";
+		boolean condicion = false;
+		while(!res.equals("1") && !res.equals("2") && !res.equals("3")) {
+			System.out.println("¿Desea realizar otra accion [1] , volver al menu principal [2]");
+			res = scaner.next();
+			if(res.equals("2")) {
+				res="4";
+				condicion=false;
+				break;
+			}if(res.equals("1")) {
+				condicion = true;
+			}
+		}
+		return condicion;
+	}
+	
+	
+}
