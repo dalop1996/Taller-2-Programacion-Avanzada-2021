@@ -1,0 +1,32 @@
+package Logica;
+
+import java.sql.Date;
+import java.text.ParseException;
+
+public interface Sistema {
+	
+	boolean agregarEstudiante(String rut, String correo,String contraseña,int nivel,int cant_ramos, String[] listaRamos ,double[] listaNotas,String[] listaRamosCursados,double[] listaNotasCursadas, int creditos);
+	boolean agregarProfesor(String rut_p,String correo,String contraseña, int salario, String[] listaRamos_P);
+	boolean agregarParalelo(String n_paralelo, String codigo, String rut_p, String[] listaEstudiantes,int cant_estudiantes);
+	boolean verificarFechaS(String dia,String mes,String año);
+	String verificarFechaI(String ingresada) throws ParseException, Exception;
+	String cursarAsignatura(String codigo);
+	String desplegarAsignaturas(String correo);
+	String AsignaturasInscritas(String correo);
+	String desplegarParalelos(String asignatura, String correo);
+	String eliminarASignatura(String nombreA,String correo);
+	String paralaleosInscritos(String rut_p);
+	String alumnosParalelos(String codigo);
+	boolean notaFinal(String rut_a);
+	boolean EliminarAlumno();
+	String obtenerAlumnosEgresados();
+	boolean agregarAsignaturaOpcional(String codigo, String nombre, int credito_necesario, String tipo_asig,
+			int credito_necesario2);
+	boolean agregarAsignaturaObligatoria(String codigo, String nombre, int credito, String tipo_asig, int nivel,
+			int cant_asig, String[] lista_codigo);
+	String verificarUsuario(String correo, String pass);
+	String inscribirAsignatura(String correo, String asignatura, String paralelo);
+	boolean revisarAsignatura(String asignatura,String correo);
+	
+	
+}
