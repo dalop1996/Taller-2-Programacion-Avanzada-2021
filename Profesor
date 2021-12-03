@@ -1,0 +1,27 @@
+package Dominio;
+
+public class Profesor extends Usuarios {
+	
+	private int sueldo;
+	private String[] listaRamos_P;
+	public Profesor(String rut, String correo, String pass, int sueldo, String[] listaRamos_P) {
+		super(rut, correo, pass);
+		this.sueldo = sueldo;
+		this.listaRamos_P = listaRamos_P;
+	}
+	public int getSueldo() {
+		return sueldo;
+	}
+	public void setSueldo(int sueldo) {
+		this.sueldo = sueldo;
+	}
+	public String[] getListaRamos_P() {
+		return listaRamos_P;
+	}
+	public void setListaRamos_P(String[] listaRamos_P) {
+		this.listaRamos_P = listaRamos_P;
+	}
+	
+	
+
+}
