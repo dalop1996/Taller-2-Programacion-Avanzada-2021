@@ -55,15 +55,20 @@ public class ListaUsuarios {
 			return txt;
 		}
 	}
-	public Usuarios buscar(String correo) {
-		int i=0;
-		while(i<cant && !l_u[i].getCorreo().equals(correo)) {
-			i++;
-		}if(i==cant) {
-			return null;
-		}else{
-			return l_u[i];
-		}
+	public Estudiante buscarEstudiante(int i) {
+		String txt="";
+		if(i<=cant) {
+			String linea = l_u[i].getCorreo();
+			String[] parte = linea.split("@");
+			txt = parte[1];
+			if(txt.equals("alumnos.ucn.cl")) {
+				return (Estudiante) l_u[i];
+			}
+    		
+    	}else {
+    		return null;
+    	}
+		return null;
 	}
 	public Profesor buscarProfe(String correo) {
 		int i=0;
