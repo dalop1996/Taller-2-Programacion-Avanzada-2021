@@ -4,29 +4,153 @@ import java.sql.Date;
 import java.text.ParseException;
 
 public interface Sistema {
-	
+	/**
+	 * add a new student to the user list
+	 * @param rut
+	 * @param correo
+	 * @param contraseña
+	 * @param nivel
+	 * @param cant_ramos
+	 * @param listaRamos
+	 * @param listaNotas
+	 * @param listaRamosCursados
+	 * @param listaNotasCursadas
+	 * @param creditos
+	 * @return
+	 */
 	boolean agregarEstudiante(String rut, String correo,String contraseña,int nivel,int cant_ramos, String[] listaRamos ,double[] listaNotas,String[] listaRamosCursados,double[] listaNotasCursadas, int creditos);
+	/**
+	 * add a new teacher to the user list
+	 * @param rut_p
+	 * @param correo
+	 * @param contraseña
+	 * @param salario
+	 * @param listaRamos_P
+	 * @return
+	 */
 	boolean agregarProfesor(String rut_p,String correo,String contraseña, int salario, String[] listaRamos_P);
+	/**
+	 * add a new parallel to list of parallels
+	 * @param n_paralelo
+	 * @param codigo
+	 * @param rut_p
+	 * @param listaEstudiantes
+	 * @param cant_estudiantes
+	 * @return
+	 */
 	boolean agregarParalelo(String n_paralelo, String codigo, String rut_p, String[] listaEstudiantes,int cant_estudiantes);
-	boolean verificarFechaS(String dia,String mes,String año);
+	/**
+	 * This function is used to verify the date range in which the semester is located
+	 * @param ingresada
+	 * @return
+	 * @throws ParseException
+	 * @throws Exception
+	 */
 	String verificarFechaI(String ingresada) throws ParseException, Exception;
-	String cursarAsignatura(String codigo);
+	/**
+	 * Generates a string with the available subjects of a user
+	 * @param correo
+	 * @return
+	 */
 	String desplegarAsignaturas(String correo);
+	/**
+	 * Generates a string with all the user's enrolled subjects
+	 * @param correo
+	 * @return
+	 */
 	String AsignaturasInscritas(String correo);
+	/**
+	 * Generates a string with all the parallels of the student's subject
+	 * @param asignatura
+	 * @param correo
+	 * @return
+	 */
 	String desplegarParalelos(String asignatura, String correo);
+	/**
+	 * Delete the student's subjects
+	 * @param nombreA
+	 * @param correo
+	 * @return
+	 */
 	String eliminarASignatura(String nombreA,String correo);
+	/**
+	 * Generate a string with the teacher's inscribed parallels
+	 * @param rut_p
+	 * @return
+	 */
 	String paralaleosInscritos(String rut_p);
+	/**
+	 * Generate a string with the students enrolled in a parallel
+	 * @param codigo
+	 * @return
+	 */
 	String alumnosParalelos(String codigo);
-	boolean notaFinal(String rut_a);
-	boolean EliminarAlumno();
+	/**
+	 * Assign the grade for the corresponding subject
+	 * @param correo
+	 * @param asignatura
+	 * @param nota
+	 * @return
+	 */
+	String notaFinal(String correo, String asignatura, double nota);
+	/**
+	 * Get a string with the students who finished cycle 10
+	 * @return
+	 */
 	String obtenerAlumnosEgresados();
+	/**
+	 * Add an optional subject to the subject list
+	 * @param codigo
+	 * @param nombre
+	 * @param credito_necesario
+	 * @param tipo_asig
+	 * @param credito_necesario2
+	 * @return
+	 */
 	boolean agregarAsignaturaOpcional(String codigo, String nombre, int credito_necesario, String tipo_asig,
 			int credito_necesario2);
+	/**
+	 * Add a required subject to the subject list
+	 * @param codigo
+	 * @param nombre
+	 * @param credito
+	 * @param tipo_asig
+	 * @param nivel
+	 * @param cant_asig
+	 * @param lista_codigo
+	 * @return
+	 */
 	boolean agregarAsignaturaObligatoria(String codigo, String nombre, int credito, String tipo_asig, int nivel,
 			int cant_asig, String[] lista_codigo);
+	/**
+	 * check if the user exists in the database
+	 * @param correo
+	 * @param pass
+	 * @return
+	 */
 	String verificarUsuario(String correo, String pass);
+	/**
+	 * enroll a new subject to the student
+	 * @param correo
+	 * @param asignatura
+	 * @param paralelo
+	 * @return
+	 */
 	String inscribirAsignatura(String correo, String asignatura, String paralelo);
 	boolean revisarAsignatura(String asignatura,String correo);
+	/**
+	 * Generates a string with all the user's enrolled subjects
+	 * @param correo
+	 * @return
+	 */
+	String desplegarAsignaturasProfesor(String correo);
+	/**
+	 * Generate a string with the students corresponding to the teacher's parallel
+	 * @param correo
+	 * @param asignatura
+	 * @return
+	 */
+	String desplegarAlumnosProfesor(String correo, String asignatura);
 	
 	
 }
