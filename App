@@ -1,15 +1,25 @@
 package Logica;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 
 import java.util.Scanner;
-
+/**
+ * 
+ * @author Joshir Contreras - Diego Lopez
+ *
+ */
 public class App {
-
+	/**
+	 * It is the beginning of the program where the different actions are executed as required by the user
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		Scanner scaner = new Scanner(System.in);
 		Sistema sis = new SistemaImpl();
@@ -18,8 +28,7 @@ public class App {
 		int cantProfesores = leerProfesores(sis);
 		int cantParalelo = leerParalelo(sis);
 		
-		
-		//separar el correo en el arriba y retornar si es profe o no
+	
 		String respuesta="";
 		while(!respuesta.equals("1")){
             System.out.println("Ingrese su correo: ");
@@ -27,17 +36,29 @@ public class App {
             System.out.println("Ingrese su contraseña: ");
             String pass = scaner.next();
             if(correo.equals("Admin") && pass.equals("GHI_789")) {
-                //modo admin
-                System.out.println("Ingrese la fecha actual (DD/MM/YYYY):");
-                String fecha = scaner.next();
-                String periodo = sis.verificarFechaI(fecha);
-                
-                System.out.println(periodo);
-                if(periodo.equals("Cierre")) {
-                    System.out.println("Menu cierre de semestre");
-                }else {
-                    System.out.println("No hay acciones disponibles");
-                }
+               String contenido = sis.obtenerAlumnosEgresados();
+               if(contenido.equals("No hay alumnos que cumplan con los requisitos")) {
+            	   System.out.println(contenido);
+            	   respuesta="1";
+               }else {
+            	   try {
+            		   String ruta = "/C:\\Users\\JoshiR\\Descargas\\Taller2.2.1/egresados.txt";
+            		   File file = new File(ruta);
+            		   if(!file.exists()) {
+            			   file.createNewFile();
+            		   }
+            		   FileWriter fw = new FileWriter(file);
+            		   BufferedWriter bw = new BufferedWriter(fw);
+            		   bw.write(contenido);
+            		   bw.close();
+            		   respuesta="1";
+            		   System.out.println("Cierre del sistema completado");
+            		   //sis.EliminarAlumno(contenido); 
+            		   
+            	   }catch(Exception e) {
+            		   e.printStackTrace();
+            	   }
+               }
             }else {
                 String res = sis.verificarUsuario(correo,pass);
                 System.out.println(res);
@@ -49,7 +70,6 @@ public class App {
                         res1 = scaner.next();
                     }
                     if(res1.equals("2")) {
-                        //cerrar
                         respuesta="2";
                         break;
                     }
@@ -65,7 +85,6 @@ public class App {
                                 System.out.println("1)Inscripcion de asignaturas\n2)Eliminacion de asignaturas");
                                 String opc = scaner.next();
                                 if(opc.equals("1")) {
-                                	//se debe verificar que la asignatura de prerequisito las tengas cumplidas el alumno
                                 	System.out.println(sis.desplegarAsignaturas(correo));
                                 	if(!sis.desplegarAsignaturas(correo).equals("No se encontraron asignaturas")) {
                                 		System.out.println("Escriba el nombre de la asignatura a inscribir: ");
@@ -111,7 +130,6 @@ public class App {
                             	if(chequeo.equals("1")) {
                             		System.out.println("Ingrese su rut");
                             		String rut_p = scaner.next();
-                            		//verificar rut :D
                             		System.out.println("Eliga alguno de sus paralelos a chequear");
                             		System.out.println(sis.paralaleosInscritos(rut_p));
                             		String paraCheq = scaner.next();
@@ -164,24 +182,33 @@ public class App {
                                 System.out.println("No hay acciones disponibles");
                                 
                             }else if(res.equals("ucn.cl")){
-                                
+                            	System.out.println("1) Ingreso de nota final");
+                           	 	String opc =  scaner.next();
+                           	 	if(opc.equals("1")) {
+                           	 		System.out.println(sis.desplegarAsignaturasProfesor(correo));
+                           	 		if(!sis.desplegarAsignaturasProfesor(correo).equals("No se encontraron asignaturas")){
+                           	 			System.out.println("Ingrese la asignatura a la que desea colocar la nota: ");
+                           	 			String asignatura = scaner.next();
+                           	 			System.out.println(sis.desplegarAlumnosProfesor(correo, asignatura));
+                           	 			if(!sis.desplegarAlumnosProfesor(correo, asignatura).equals("No se encontraron alumnos")) {
+                           	 				System.out.println("Ingrese el correo del alumno que desea colocar la nota: ");
+                           	 				String correo_alumno = scaner.next();
+                           	 				System.out.println("Ingrese la nota: ");
+                           	 				double nota = scaner.nextDouble();
+                           	 				System.out.println(sis.notaFinal(correo_alumno,asignatura,nota));
+                           	 				}
+                           	 				condicion=bucle();
+                           	 			}
+                           	 		} 
+                           	 	}else {
+                           	 		System.out.println("No hay acciones disponibles");
+                           	 		condicion = bucle();
+                           	 	}
                             }else {
                                 System.out.println("No hay acciones disponibles");
                             }
                             
-                        }//else if(periodo.equals("Cierre")) {}
-                            
-                        else {
-                            String res1 ="";
-                            while(!res1.equals("1") && !res1.equals("2")) {
-                                System.out.println("No coinciden los datos\nDesea volver a intentarlo [1] o Cerrar [2]");
-                                res1 = scaner.next();
-                            }if(res1.equals("2")) {
-                                //cerrar
-                                respuesta="2";
-                                break;
-                            }
-                        }
+                        
                     }
                     
                     
@@ -191,7 +218,12 @@ public class App {
             
         }
 	}
-
+	/**
+	 * Function in charge of reading the profesores.txt file
+	 * @param sis
+	 * @return
+	 * @throws IOException
+	 */
 	private static int leerProfesores(Sistema sis) throws IOException {
 		BufferedReader arch = new BufferedReader(new FileReader("profesores.txt"));
 		String linea;
@@ -205,11 +237,15 @@ public class App {
 			int sueldo = Integer.parseInt(parte[3]);
 			sis.agregarProfesor(rut, correo, pass, sueldo, listaRamos_P);
 			cant++;
-			System.out.println(rut);
 		}
 		return cant;
 	}
-
+	/**
+	 * Function in charge of reading the asignaturas.txt file
+	 * @param sis
+	 * @return
+	 * @throws IOException
+	 */
 	private static int leerAsignatura(Sistema sis) throws IOException {
 		BufferedReader arch = new BufferedReader(new FileReader("asignaturas.txt"));
 		String linea;
@@ -241,6 +277,12 @@ public class App {
 
 		return cant;
 	}
+	/**
+	 * Function in charge of reading the estudiantes.txt file
+	 * @param sis
+	 * @return
+	 * @throws IOException
+	 */
 	private static int leerEstudiantes(Sistema sis) throws IOException {
 		BufferedReader arch = new BufferedReader(new FileReader("estudiantes.txt"));
 		String linea;
@@ -270,6 +312,12 @@ public class App {
 		}
 		return cant;
 	}
+	/**
+	 * Function in charge of reading the paralelos.txt file
+	 * @param sis
+	 * @return
+	 * @throws IOException
+	 */
 	private static int leerParalelo(Sistema sis) throws IOException{
 		BufferedReader arch = new BufferedReader(new FileReader("paralelos.txt"));
         int cant = 0;
@@ -287,6 +335,10 @@ public class App {
 
         return cant;
     }
+	/**
+	 * Function in charge of seeing if the client that executes the program wants to carry out more actions
+	 * @return
+	 */
 	private static boolean bucle() {
 		Scanner scaner = new Scanner(System.in);
 		String res="";
@@ -304,6 +356,4 @@ public class App {
 		}
 		return condicion;
 	}
-	
-	
 }
