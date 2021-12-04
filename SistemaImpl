@@ -63,21 +63,6 @@ public class SistemaImpl implements Sistema{
         return ingreso;
     }
 
-    
-    public boolean verificarFechaS(String dia, String mes, String año) {
-        
-        return false;
-    }
-
-    
-    public String cursarAsignatura(String codigo) {
-        
-        return null;
-    }
-
-    
-    
-    @Override
     public String desplegarAsignaturas(String correo) {
         String txt="";
         for(int i=0;i<l_a.getCant();i++) {
@@ -93,7 +78,6 @@ public class SistemaImpl implements Sistema{
         return txt;
     }
 
-    @Override
     public String desplegarParalelos(String asignatura, String correo) {
         String txt="";
         String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
@@ -249,21 +233,54 @@ public class SistemaImpl implements Sistema{
     }
 
     @Override
-    public boolean notaFinal(String rut_a) {
-        // TODO Auto-generated method stub
-        return false;
+    public String notaFinal(String correo, String asignatura,double nota) {
+        String txt="";
+        int contador=0;
+        String[] listaA = l_u.buscarEstudiante(correo).getListaRamos();
+        double[] listaN = l_u.buscarEstudiante(correo).getListaNotas();
+        for(int i=0; i< listaA.length;i++) {
+        	if(listaA[i] != null) {
+        		if(listaA[i].equals(asignatura)) {
+        			listaN[i] = nota;
+        			contador++;
+        		}
+        	}
+        }
+        if(contador==0) {
+        	txt="No se encontro el correo del alumno";
+        }else {
+        	txt="Nota ingresada con exito";
+        }
+        return txt;
     }
-
-    @Override
-    public boolean EliminarAlumno() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public String obtenerAlumnosEgresados() {
-        // TODO Auto-generated method stub
-        return null;
+        String txt="";
+        int contador=0;
+        int cantNotas=0;
+        for(int i=0;i<l_u.getCant();i++) {
+        	if(l_u.buscarEstudiante(i) != null) {
+        		if(l_u.buscarEstudiante(i).getNivel() == 10) {
+            		double[] listaN = l_u.buscarEstudiante(i).getListaNotas();
+            		String[] listaA = l_u.buscarEstudiante(i).getListaRamos();
+            		for(int k=0;k<listaN.length;k++) {
+            			if(listaA[k] != null) {
+            				cantNotas++;
+            				if(listaN[k] > 3.94) {
+            					contador++;
+            				}
+            			}
+            		}
+            	}
+            	if(cantNotas==contador && cantNotas!=0) {
+            		//el alumno aprobo todo;
+            		txt+=l_u.buscarEstudiante(i).getRut()+"\n";
+            		
+            	}
+        	}	
+        }if(txt.equals("")) {
+        	txt= "No hay alumnos que cumplan con los requisitos";
+        }
+        return txt;
     }
 
 	@Override
@@ -287,20 +304,16 @@ public class SistemaImpl implements Sistema{
 
         if(!(fecha1.isBefore(Iuno) || fecha1.isAfter(Funo))) {
             txt="Inicio";
-            System.out.println("Primero ciclo");
 
         }else if(!(fecha1.isBefore(Idos) || fecha1.isAfter(Fdos) )) {
             txt="Mitad";
-            System.out.println("S ciclo");
 
 
         }else if(!(fecha1.isBefore(Itres)||fecha1.isAfter(Ftres))) {
             txt="Final";
-            System.out.println("T ciclo");
 
         }else if(fecha1.compareTo(FF) ==0) {
             txt="Cierre";
-            System.out.println("F ciclo");
 
         }else {
             System.out.print("Disfrute de sus Vacaciones");
@@ -340,6 +353,36 @@ public class SistemaImpl implements Sistema{
 		
 		return txt;
 	}
-	
-		
+	public String desplegarAsignaturasProfesor(String correo) {
+		String rut = l_u.buscarProfe(correo).getRut();
+		String txt="";
+		for(int i=0; i<l_p.getCant();i++) {
+			if(l_p.buscarPos(i).getRut_p().equals(rut)) {
+				for(int k=0; k<l_a.getCant();k++) {
+					if(l_p.buscarPos(i).getCodigo_a().equals(l_a.buscarPosicion(k).getCodigo())) {
+						txt+="Asignatura: "+l_a.buscarPosicion(k).getNombre()+"\n";
+					}
+				}
+			}
+		}
+		if(txt.equals("")) {
+			txt= "No se encontraron asignaturas";
+		}
+		return txt;
+	}
+	@Override
+	public String desplegarAlumnosProfesor(String correo, String asignatura) {
+		String txt="";
+		String codigo = l_a.buscar(asignatura).getCodigo();
+		String[] lista = l_p.buscar(codigo).getListaEstudiantes();
+		for(int i=0;i<lista.length;i++) {
+			if(lista[i] != null) {
+				txt+="Correo del alumno: "+lista[i]+"\n";
+			}
+		}
+		if(txt.equals("")) {
+			txt="No se encontraron alumnos";
+		}
+		return txt;
+	}	
 }
